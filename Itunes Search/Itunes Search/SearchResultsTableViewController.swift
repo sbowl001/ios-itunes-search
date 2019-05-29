@@ -25,12 +25,12 @@ class SearchResultsTableViewController: UITableViewController, UISearchBarDelega
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        guard let searchTerm = self.searchBar.text else {return}
+        guard let searchTerm = self.searchBar.text, searchTerm != "" else {return}
         
         var resultType: ResultType!
         
         
-        switch searchTerm {
+        switch searchControl.selectedSegmentIndex {
         case 0:
             resultType = .software
             

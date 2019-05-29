@@ -17,20 +17,22 @@ class SearchResultController {
 //        This function should use URLSession's dataTask(with: URL, completion: ...) method to create a data task. Remember to call .resume().
         var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: true   )
         //Note - What part of the instructions actually call for this following code? :
-        let searchTermQueryItem = URLQueryItem(name: "term", value: searchTerm)
-         let searchTermEntityQueryItem = URLQueryItem(name: "entity", value: resultType.rawValue)
-        urlComponents?.queryItems = [searchTermQueryItem, searchTermEntityQueryItem] //add term
+        let searchQueryItem = URLQueryItem(name: "term", value: searchTerm)
+         let searchEntityQueryItem = URLQueryItem(name: "entity", value: resultType.rawValue)
+        urlComponents?.queryItems = [searchQueryItem, searchEntityQueryItem] //add term
         // End Note
         
         guard let requestURL = urlComponents?.url else {NSLog("requestURL is nil"); completion(nil); return}
         
-        let request = URLRequest(url: requestURL)
+        var request = URLRequest(url: requestURL)
+        print(request)
+        request.httpMethod = "GET"
         
         URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let error = error {
                 NSLog("error fetching data \(error)")
                 completion(error)
-                return
+             
                 //        Give names to the return types.
                 //        Check for errors. If there is an error, call completion with the error.
             }
@@ -49,7 +51,7 @@ class SearchResultController {
                 let resultSearch = try jsonDecoder.decode(SearchResults.self, from: data )
                 self.searchResults = resultSearch.results
                 
-                //could do breakpoint here to debug 
+                //could do breakpoint here to debug
                 //        Set the value of the searchResults variable in this model controller to the SearchResults' results array.
                 //        Still in the do statement, call completion with nil.
 
