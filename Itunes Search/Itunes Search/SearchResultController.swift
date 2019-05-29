@@ -16,11 +16,11 @@ class SearchResultController {
     func performSearch(searchTerm: String, resultType: ResultType, completion: @escaping (Error?) ->  Void) {
 //        This function should use URLSession's dataTask(with: URL, completion: ...) method to create a data task. Remember to call .resume().
         var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: true   )
-        //Note - What part of the instructions actually call for this following code? :
+     
         let searchQueryItem = URLQueryItem(name: "term", value: searchTerm)
          let searchEntityQueryItem = URLQueryItem(name: "entity", value: resultType.rawValue)
         urlComponents?.queryItems = [searchQueryItem, searchEntityQueryItem] //add term
-        // End Note
+
         
         guard let requestURL = urlComponents?.url else {NSLog("requestURL is nil"); completion(nil); return}
         
@@ -44,9 +44,9 @@ class SearchResultController {
             }
             
             //        If you do get data back, use a do-try-catch block and JSONDecoder to decode SearchResults from the data returned from the data task. Create a constant for this decoded SearchResults object.
-            let jsonDecoder = JSONDecoder()
-            
+ 
             do {
+               let jsonDecoder = JSONDecoder()
                 jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
                 let resultSearch = try jsonDecoder.decode(SearchResults.self, from: data )
                 self.searchResults = resultSearch.results
