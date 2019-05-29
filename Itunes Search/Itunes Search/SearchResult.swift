@@ -12,13 +12,16 @@ struct SearchResult: Codable {
   
     let title : String
     let creator : String
+    
+    
+    enum CodingKeys: String, CodingKey {
+        case title = "trackName"
+        case creator = "artistName"
+    }
 }
 
-enum CodingKeys: String, CodingKey {
-    case title = "trackName"
-    case creator = "artistName"
-}
 
-struct SearchResults {
+
+struct SearchResults: Decodable {
     let results: [SearchResult]
 }

@@ -16,14 +16,20 @@ class SearchResultController {
     func performSearch(searchTerm: String, resultType: ResultType, completion: @escaping (Error?) ->  Void) {
 //        This function should use URLSession's dataTask(with: URL, completion: ...) method to create a data task. Remember to call .resume().
         var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: true   )
-        guard let requestURL = urlComponents?.url else {NSLog("requestURL is nil"); completion(); return}
+        //Note - What part of the instructions actually call for this following code? :
+        let searchTermQueryItem = URLQueryItem(name: "term", value: searchTerm)
+         let searchTermEntityQueryItem = URLQueryItem(name: "entity", value: resultType.rawValue)
+        urlComponents?.queryItems = [searchTermQueryItem, searchTermEntityQueryItem] //add term
+        // End Note
         
-        var request = URLRequest(url: requestURL)
+        guard let requestURL = urlComponents?.url else {NSLog("requestURL is nil"); completion(nil); return}
+        
+        let request = URLRequest(url: requestURL)
         
         URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let error = error {
                 NSLog("error fetching data \(error)")
-                completion()
+                completion(error)
                 return
                 //        Give names to the return types.
                 //        Check for errors. If there is an error, call completion with the error.
@@ -31,7 +37,7 @@ class SearchResultController {
           //        Unwrap the data. If there is no data, call completion, and return NSError() in it.
             guard let data = data else {
                 NSLog("No data returned from data task")
-                completion()
+                completion(nil)
                 return
             }
             
@@ -41,24 +47,22 @@ class SearchResultController {
             do {
                 jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
                 let resultSearch = try jsonDecoder.decode(SearchResults.self, from: data )
-                self.results = resultSearch.results
+                self.searchResults = resultSearch.results
+                
+                //could do breakpoint here to debug 
                 //        Set the value of the searchResults variable in this model controller to the SearchResults' results array.
                 //        Still in the do statement, call completion with nil.
 
             } catch {
-                NSLog("Unable to decode data into object of type []: \(error)"
+                NSLog("Unable to decode data into object of type []: \(error)")
                    //        In the catch statement, call completion with error.
-            } completion()
+                completion(error)
+            }
+            completion(nil)
          
         } .resume ()
             
             
         }
- 
 
-
-
-
-
-    
 }
